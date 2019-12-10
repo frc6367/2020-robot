@@ -10,7 +10,6 @@ class Drivetrain:
   drive_l2: ctre.WPI_VictorSPX
   drive_r1: ctre.WPI_VictorSPX
   drive_r2: ctre.WPI_VictorSPX
-    
 
   #Sets up the rest of the variables that will be determined by the input of the joystick
   def setup(self):
@@ -29,11 +28,11 @@ class Drivetrain:
     #Used to change the variables
   def driveC(self, xs, ys, zr):
     self.xspeed = xs**3
-    self.yspeed = ys**3
+    self.yspeed = -ys**3
     self.zrotation = zr
   def driveP(self,mag,angle):
     self.mag = mag
     self.angle = angle
     #Runs the code
   def execute(self):
-    self.mdrive.drivePolar(self.mag,self.angle,0)
+    self.mdrive.driveCartesian(self.xspeed,self.yspeed,self.zrotation,0)
