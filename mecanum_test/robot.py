@@ -3,11 +3,13 @@ import ctre
 import math
 from drivetrain import Drivetrain
 from intake import Intake
+from pneumatic import Pneumatic
 from magicbot import MagicRobot
 
 class MyRobot(MagicRobot):
     drivetrain: Drivetrain
     intake: Intake
+    pneumatic: Pneumatic
 
     def createObjects(self):
 
@@ -19,6 +21,8 @@ class MyRobot(MagicRobot):
         self.drive_l2 = ctre.WPI_VictorSPX(2) #
         self.drive_r1 = ctre.WPI_VictorSPX(4) #
         self.drive_r2 = ctre.WPI_VictorSPX(3) #
+
+        self.solenoid = wpilib.DoubleSolenoid(0,1)
 
         self.intake_motor = ctre.WPI_TalonSRX(7)
         self.intake_motor.setNeutralMode(self.intake_motor.NeutralMode.Brake)
@@ -32,12 +36,19 @@ class MyRobot(MagicRobot):
         # Victor 4 works fine
         self.driveCartesian()
         self.intakeButtons()
+        self.pneumaticButtons()
 
     def intakeButtons(self):
         if self.joystick.getRawButton(1):
             self.intake.ballIn()
         elif self.joystick.getRawButton(2):
             self.intake.ballOut()
+    
+    def pneumaticButtons(self):
+        if self.joystick.getRawButton(5):
+            self.pneumatic.extend()
+        elif self.joystick.getRawButton(3):
+            self.pneumatic.retract()
 
     def drivePolar(self):
         angle = math.tan(self.joystick.getY()/self.joystick.getX())
