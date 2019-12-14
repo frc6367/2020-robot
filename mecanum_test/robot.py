@@ -2,10 +2,12 @@ import wpilib
 import ctre
 import math
 from drivetrain import Drivetrain
+from intake import Intake
 from magicbot import MagicRobot
 
 class MyRobot(MagicRobot):
     drivetrain: Drivetrain
+    intake: Intake
 
     def createObjects(self):
 
@@ -13,10 +15,13 @@ class MyRobot(MagicRobot):
         self.joystick = wpilib.Joystick(0)
 
         #Creates the motor control objects
-        self.drive_l1 = ctre.WPI_VictorSPX(3)
-        self.drive_l2 = ctre.WPI_VictorSPX(4)
-        self.drive_r1 = ctre.WPI_VictorSPX(1)
-        self.drive_r2 = ctre.WPI_VictorSPX(2)
+        self.drive_l1 = ctre.WPI_VictorSPX(1) # 
+        self.drive_l2 = ctre.WPI_VictorSPX(2) #
+        self.drive_r1 = ctre.WPI_VictorSPX(4) #
+        self.drive_r2 = ctre.WPI_VictorSPX(3) #
+
+        self.intake_motor = ctre.WPI_TalonSRX(7)
+        self.intake_motor.setNeutralMode(self.intake_motor.NeutralMode.Brake)
 
         self.TWIST_DEAD_BAND = .3
 
@@ -26,6 +31,13 @@ class MyRobot(MagicRobot):
         # Victor 2 and 3 don't work moving forward
         # Victor 4 works fine
         self.driveCartesian()
+        self.intakeButtons()
+
+    def intakeButtons(self):
+        if self.joystick.getRawButton(1):
+            self.intake.ballIn()
+        elif self.joystick.getRawButton(2):
+            self.intake.ballOut()
 
     def drivePolar(self):
         angle = math.tan(self.joystick.getY()/self.joystick.getX())
@@ -38,5 +50,7 @@ class MyRobot(MagicRobot):
         if(t > self.TWIST_DEAD_BAND):
             t = self.joystick.getTwist()
         self.drivetrain.driveC(self.joystick.getX(),self.joystick.getY(),self.joystick.getTwist())
+
+# Don't mess with this (Runs Program)
 if __name__ == "__main__":
     wpilib.run(MyRobot)
