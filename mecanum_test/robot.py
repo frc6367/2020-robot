@@ -17,18 +17,23 @@ class MyRobot(MagicRobot):
         self.joystick = wpilib.Joystick(0)
 
         #Creates the motor control objects
-        self.drive_l1 = ctre.WPI_VictorSPX(1) # 
-        self.drive_l2 = ctre.WPI_VictorSPX(2) #
-        self.drive_r1 = ctre.WPI_VictorSPX(4) #
-        self.drive_r2 = ctre.WPI_VictorSPX(3) #
+        self.drive_l1 = ctre.WPI_VictorSPX(3) # 
+        self.drive_l2 = ctre.WPI_VictorSPX(4) #
+        self.drive_r1 = ctre.WPI_VictorSPX(1) #
+        self.drive_r2 = ctre.WPI_VictorSPX(2) #
 
         self.solenoid = wpilib.DoubleSolenoid(0,1)
 
-        self.intake_motor = ctre.WPI_TalonSRX(7)
+        self.intake_motor = ctre.WPI_TalonSRX(5)
         self.intake_motor.setNeutralMode(self.intake_motor.NeutralMode.Brake)
 
         self.TWIST_DEAD_BAND = .3
 
+    def teleopInit(self):
+        wpilib.LiveWindow.setEnabled(False)
+
+    def testInit(self):
+        wpilib.LiveWindow.setEnabled(True)
 
     def teleopPeriodic(self):
         # Victor 1 Doesn't work
