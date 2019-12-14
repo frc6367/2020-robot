@@ -27,12 +27,11 @@ class Drivetrain:
     
     #Used to change the variables
   def driveC(self, xs, ys, zr):
-    self.xspeed = xs**3
-    self.yspeed = -ys**3
+    # self.xspeed = xs**3
+    # self.yspeed = -ys**3
+    self.xspeed = xs
+    self.yspeed = ys
     self.zrotation = zr
-  def driveP(self,mag,angle):
-    self.mag = mag
-    self.angle = angle
-    #Runs the code
+ 
   def execute(self):
-    self.mdrive.driveCartesian(self.xspeed,self.yspeed,self.zrotation,0)
+    self.mdrive.driveCartesian(self.yspeed,self.xspeed,self.zrotation,0)
