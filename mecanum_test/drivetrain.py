@@ -24,7 +24,7 @@ class Drivetrain:
     self.mag = 0
     self.angle = 0
     self.rot = 0
-    self.mdrive.setDeadband(1)
+    self.mdrive.setDeadband(0.1)
     
     #Used to change the variables
   def driveC(self, xs, ys, zr):
