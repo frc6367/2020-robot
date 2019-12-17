@@ -6,6 +6,7 @@ from intake import Intake
 from pneumatic import Pneumatic
 from magicbot import MagicRobot
 
+
 class MyRobot(MagicRobot):
     drivetrain: Drivetrain
     intake: Intake
@@ -34,6 +35,7 @@ class MyRobot(MagicRobot):
 
     def testInit(self):
         wpilib.LiveWindow.setEnabled(True)
+        
 
     def teleopPeriodic(self):
         # Victor 1 Doesn't work
