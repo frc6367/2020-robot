@@ -41,8 +41,8 @@ class MyRobot(MagicRobot):
         # Victor 1 Doesn't work
         # Victor 2 and 3 don't work moving forward
         # Victor 4 works fine
-        self.driveCartesian()
-        self.intakeButtons()
+        # self.driveCartesian()
+        # self.intakeButtons()
         self.pneumaticButtons()
 
     def intakeButtons(self):
