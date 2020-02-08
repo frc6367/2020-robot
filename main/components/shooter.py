@@ -1,15 +1,15 @@
 import ctre
 import magicbot
-class Intake:
+class Shooter:
 
-    intake_motor: ctre.WPI_TalonSRX
+    shooter_motor: ctre.WPI_TalonSRX
     
     def setup(self):
         self.speed = 0
 
-    def ballIn(self):
+    def shoot(self):
         self.speed = 1
     
     def execute(self):
-        self.intake_motor.set(self.speed)
+        self.shooter_motor.set(self.speed)
         self.speed = 0
