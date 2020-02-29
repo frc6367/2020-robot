@@ -1,2 +1,5 @@
 
 *.pyc
+
+opkg_cache
+pip_cache

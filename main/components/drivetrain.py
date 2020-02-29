@@ -24,7 +24,8 @@ class Drivetrain:
         self.drive_r2.follow(self.drive_r1)
         self.speed = 0
         self.rotation = 0
-        self.maxOut = 0
+        self.maxOut = 0        
+
         self.mdrive = wpilib.drive.DifferentialDrive(self.drive_l1,self.drive_r1)
 
         self.kdistancePulse = 0.1524*math.pi/4 # This has to change to the correct value
@@ -110,3 +111,5 @@ class Drivetrain:
         self.rotation = 0
         self.volts_l = 0
         self.volts_r = 0
+
+        
