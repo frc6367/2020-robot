@@ -3,3 +3,6 @@
 
 opkg_cache
 pip_cache
+
+imgui.ini
+.deploy_cfg
