@@ -26,30 +26,36 @@ class MyRobot(wpilib.TimedRobot):
         self.lstick = wpilib.Joystick(0)
         self.rstick = wpilib.Joystick(1)
 
-        # self.l_motor = ctre.VictorSPX(1)
-        # self.r_motor = ctre.VictorSPX(2)
-        # self.l_motor2 = ctre.VictorSPX(3)
-        # self.r_motor2 = ctre.VictorSPX(4)
+        self.l_motor = ctre.WPI_VictorSPX(1)
+        self.r_motor = ctre.WPI_VictorSPX(4)
+        self.l_motor2 = ctre.WPI_VictorSPX(2)
+        self.r_motor2 = ctre.WPI_VictorSPX(3)
 
         # Position gets automatically updated as robot moves
         # self.gyro = wpilib.AnalogGyro(1)
 
-        # self.l_motor2.follow(self.l_motor)
-        # self.r_motor2.follow(self.r_motor)
+    
 
-        # self.drive = wpilib.drive.DifferentialDrive(self.l_motor, self.r_motor)
+        self.drive = wpilib.drive.DifferentialDrive(self.l_motor, self.r_motor)
+        self.drive2 = wpilib.drive.DifferentialDrive(self.l_motor2,self.r_motor2)
 
-        self.motor = wpilib.Jaguar(4)
-
-        self.limit1 = wpilib.DigitalInput(1)
-        self.limit2 = wpilib.DigitalInput(2)
 
         self.sensor1 = wpilib.AnalogInput(0)
-        self.position = wpilib.AnalogInput(1)
+        self.sensor2 = wpilib.AnalogInput(1)
+        self.sensor3 = wpilib.AnalogInput(2)
 
+        # state (steps/stages) for the intake 
+        # refer to def operatedIntake(self) about implementation
         self.step = -1
 
-        self.kBallTreshhold = 1.75
+        # value for the sensor that detects if ball is there  
+        # if the value is above 1.8 the ball is there otherwise it is not 
+        self.kBallTreshhold = 1.6
+
+        self.kBeltSpeed = -.3
+       
+       # if in simulation mode it turns on the physics engine
+       # initializes time  
 
         if is_sim:
             self.physics = physics.PhysicsEngine()
@@ -70,6 +76,7 @@ class MyRobot(wpilib.TimedRobot):
         self.timer.start()
 
     def autonomousPeriodic(self):
+        """Called every couple of milseconds""" 
         if self.timer.get() < 2.0:
             self.drive.arcadeDrive(-1.0, -0.3)
         else:
@@ -82,17 +89,9 @@ class MyRobot(wpilib.TimedRobot):
         #self.drive.arcadeDrive(self.lstick.getRawAxis(1), self.lstick.getRawAxis(3))
 
         # Move a motor with a Joystick
-        y = self.rstick.getY()
 
-        # stop movement backwards when 1 is on
-        if self.limit1.get():
-            y = max(0, y)
-
-        # stop movement forwards when 2 is on
-        if self.limit2.get():
-            y = min(0, y)
-
-        self.motor.set(y)
+        self.drive.arcadeDrive(-self.joystick.getY(),self.joystick.getX(),False)
+        self.drive2.arcadeDrive(-self.joystick.getY(),self.joystick.getX(),False)
 
         self.autoIntake()
 
@@ -114,61 +113,39 @@ class MyRobot(wpilib.TimedRobot):
             self.step = 0
 
         if self.joystick.getRawButton(2):
+            # if not self.ballPresent(self.sensor3):
             self.step = -1
+
+        if self.joystick.getRawButton(5):
+            self.spark.set(-1)
+        elif self.step == -1:
+            self.spark.set(0)
+        # elif self.ballPresent(self.sensor3):
+        #     self.step = -1
+        #     self.talon.set(ctre.ControlMode.PercentOutput,0)
+        #     self.spark.set(0)
 
         self.speed = self.joystick.getRawAxis(3)
         self.speed = 1 - (self.speed + 1)/2
 
+        #Steps
         if self.step == 0:
             self.talon.set(ctre.ControlMode.PercentOutput,-self.speed)
             if self.ballPresent(self.sensor1):
-                if self.ballPresent(self.position):
-                    self.step = 2
-                else:
-                    self.step = 1
+                self.step = 1
+                self.talon.set(ctre.ControlMode.PercentOutput,0)
 
         elif self.step == 1:
-            self.spark.set(-self.speed)
-            self.talon.set(ctre.ControlMode.PercentOutput,0)
-            if self.ballPresent(self.position):
-                self.step = -1
-        
+            self.spark.set(self.kBeltSpeed)
+            if not self.ballPresent(self.sensor1):
+                self.step = 2
+
         elif self.step == 2:
-            self.talon.set(ctre.ControlMode.PercentOutput,0)
-            if not self.ballPresent(self.position):
-                self.step = 3
-
-        elif self.step == 3:
-            self.spark.set(-self.speed)
-            self.talon.set(ctre.ControlMode.PercentOutput,0)
-            if self.ballPresent(self.position):
+            self.spark.set(self.kBeltSpeed)
+            if self.ballPresent(self.sensor2):
                 self.step = -1
-
-        # elif self.step == 2:
-        #     self.speed = self.joystick.getRawAxis(3)
-        #     self.speed = 1 - (self.speed + 1)/2
-        #     self.spark.set(-self.speed)
-        #     self.talon.set(ctre.ControlMode.PercentOutput,0)
-        #     if not self.ballPresent(self.position):
-        #         self.step = -1
-        else:
-            self.spark.set(0)
-            self.talon.set(ctre.ControlMode.PercentOutput,0)
-        #     self.speed = self.joystick.getRawAxis(3)
-        #     self.speed = 1 - (self.speed + 1)/2
-        #     if self.joystick.getRawButton(6):
-        #         self.speed *= -1
-        #     self.spark.set(-self.speed)
-        # elif self.joystick.getRawButton(2):
-        #     self.speed = self.joystick.getRawAxis(3)
-        #     self.speed = 1 - (self.speed + 1)/2
-        #     if self.joystick.getRawButton(6):
-        #         self.speed *= -1
-        #     self.talon.set(ctre.ControlMode.PercentOutput,-self.speed)
-        # else:
-        #     self.speed = 0
-        #     self.spark.set(self.speed)
-        #     self.talon.set(ctre.ControlMode.PercentOutput,self.speed)
+                self.spark.set(0)
+                self.talon.set(ctre.ControlMode.PercentOutput,0)
 
 
     def ballPresent(self, sensor):

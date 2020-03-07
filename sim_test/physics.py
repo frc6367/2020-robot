@@ -99,21 +99,17 @@ class Field:
 
 
         c = math.cos(self.angle)
-
         s = math.sin(self.angle)
 
 
 
         self.x += x * c - y * s
-
         self.y += x * s + y * c
 
         
 
         self.fx.set(self.x)
-
         self.fy.set(self.y)
-
         self.frot.set(math.degrees(self.angle))
 
 
@@ -145,22 +141,17 @@ class PhysicsEngine(object):
         # Motors
 
         self.l_motor = hal.simulation.PWMSim(1)
-
         self.r_motor = hal.simulation.PWMSim(2)
 
 
 
         self.dio1 = hal.simulation.DIOSim(1)
-
         self.dio2 = hal.simulation.DIOSim(2)
-
         self.ain2 = hal.simulation.AnalogInSim(2)
 
 
 
         self.motor = hal.simulation.PWMSim(4)
-
-
 
         self.position = 0
 
